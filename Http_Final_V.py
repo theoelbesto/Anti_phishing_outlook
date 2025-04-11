@@ -10,7 +10,7 @@ tenant_id = os.getenv('TENANT_ID')
 client_id = os.getenv('APPLICATION_ID')
 redirect_uri = 'http://localhost:8080'
 client_secret =  os.getenv('CLIENT_SECRET')
-scopes = ["User.Read", "Mail.Read"] 
+scopes = ["User.Read", "profile","email"] 
 
 def get_auth_url():
     auth_url = (
@@ -57,7 +57,7 @@ def get_tokens(auth_code):
     response = requests.post(token_url, headers=headers, data=data)
     return response.json()
 
-def call_graph_api(access_token, endpoint="me"):
+def call_graph_api(access_token, endpoint="me?$select=mail,userPrincipalName,email"):
     graph_url = f"https://graph.microsoft.com/v1.0/{endpoint}"
     
     headers = {
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     
     tokens = get_tokens(auth_code)
     access_token = tokens['access_token']
-    
+    print("\nAccess Token:", access_token)
     print("\nGetting user info from Microsoft Graph...")
     user_info = call_graph_api(access_token)
     print("Answer", user_info)
